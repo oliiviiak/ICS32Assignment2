@@ -41,6 +41,16 @@ def create_profile():
     password = input("Enter password: ").strip()
     bio = input("Enter bio: ").strip()
 
+    # if there's a space in the username or password
+    if " " in username or " " in password:
+        print("ERROR: Username and password cannot contain spaces.")
+        return
+    
+    current_profile = Profile(username, password)
+    current_profile.bio = bio
+    current_profile.save_profile(str(current_path))
+    print(f"Profile created and saved to {current_path}")
+
 
 def open_profile():
 
