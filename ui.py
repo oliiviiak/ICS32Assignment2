@@ -32,11 +32,13 @@ def create_profile():
     path_str = input("Enter directory path: ").strip()
     name = input("Enter filename: ").strip()
 
+    # check if the file path ends in ".dsu"
     if not name.endswith(".dsu"):
         name += ".dsu"
     
     current_path = Path(path_str) / name
 
+    # get profile parameters information
     username = input("Enter username: ").strip()
     password = input("Enter password: ").strip()
     bio = input("Enter bio: ").strip()
@@ -46,13 +48,30 @@ def create_profile():
         print("ERROR: Username and password cannot contain spaces.")
         return
     
+    # create Profile object using user inputs
     current_profile = Profile(username, password)
     current_profile.bio = bio
     current_profile.save_profile(str(current_path))
     print(f"Profile created and saved to {current_path}")
 
 
-def open_profile():
+def open_profile(path_provided=None):
+    # if there's a path given
+    if path_provided:
+        path_str = path_provided
+    else:
+        # if there's no path given, get path
+        path_str = input("Enter the full path to the .dsu file to open: ").strip()
+    
+    # load profile with the given path (current_profile)
+    file_path = Path(path_str)
+    if file_path.suffix == ".dsu" and file_path.exists():
+        current_profile = Profile()
+        current_profile.load_profile(str(file_path))
+        current_path = file_path
+        print(f"Opened: {current_path}")
+    else:
+        print("ERROR: path is invalid.")
 
 
 def edit_profile():
