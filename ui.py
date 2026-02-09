@@ -35,7 +35,7 @@ def create_profile():
     # check if the file path ends in ".dsu"
     if not name.endswith(".dsu"):
         name += ".dsu"
-    
+
     current_path = Path(path_str) / name
 
     # get profile parameters information
@@ -47,7 +47,7 @@ def create_profile():
     if " " in username or " " in password:
         print("ERROR: Username and password cannot contain spaces.")
         return
-    
+
     # create Profile object using user inputs
     current_profile = Profile(username, password)
     current_profile.bio = bio
@@ -62,7 +62,7 @@ def open_profile(path_provided=None):
     else:
         # if there's no path given, get path
         path_str = input("Enter the full path to the .dsu file to open: ").strip()
-    
+
     # load profile with the given path (current_profile)
     file_path = Path(path_str)
     if file_path.suffix == ".dsu" and file_path.exists():
@@ -80,24 +80,40 @@ def edit_profile(parts):
     if current_profile is None:
         print("ERROR: No profile loaded.")
         return
-    
+
     try:
-        #start from index 1 of parts because 0 is E
+        # start from index 1 of parts because 0 is E
         i = 1
         while i < len(parts):
             option = parts[i]
 
             if option == "-usr":
-                
+                current_profile.username = parts[i+1]
+                i += 2
+
             elif option == "-pwd":
-            
+                current_profile.password = parts[i+1]
+                i += 2
+
             elif option == "-bio":
-            
+                current_profile.bio = parts[i+1]
+                i += 2
+
             elif option == "-addpost":
+                new_entry = parts[i+1]
+                current_profile.add_post(Post(new_entry))
+                i += 2
 
             elif option == "-delpost":
-            
+                post_index = int(parts[i+1])
+                current_profile.del_post(post_index)
+                i += 2
+
             else:
+                i += 1
+
+        current_profile.save_profile(str(current_path))
+        print("Profile updated successfully!")
 
     except (IndexError, ValueError):
         print("ERROR: Invalid format for edit command.")
