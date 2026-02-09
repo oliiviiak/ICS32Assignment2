@@ -6,6 +6,11 @@ import shlex
 from pathlib import Path
 from Profile import Profile, Post
 
+
+current_profile = None
+current_path = None
+
+
 def start():
     print("Welcome to the Journaling System!")
     start_choice = input("Enter 'C' to create a new file, 'O' to open, or 'admin' for command mode: ").strip()
@@ -24,6 +29,17 @@ def run_admin_mode():
 
 
 def create_profile():
+    path_str = input("Enter directory path: ").strip()
+    name = input("Enter filename: ").strip()
+
+    if not name.endswith(".dsu"):
+        name += ".dsu"
+    
+    current_path = Path(path_str) / name
+
+    username = input("Enter username: ").strip()
+    password = input("Enter password: ").strip()
+    bio = input("Enter bio: ").strip()
 
 
 def open_profile():
