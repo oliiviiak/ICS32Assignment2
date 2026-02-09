@@ -74,4 +74,35 @@ def open_profile(path_provided=None):
         print("ERROR: path is invalid.")
 
 
-def edit_profile():
+def edit_profile(parts):
+    # param parts are the parts of the given command
+
+    if current_profile is None:
+        print("ERROR: No profile loaded.")
+        return
+    
+    try:
+        #start from index 1 of parts because 0 is E
+        i = 1
+        while i < len(parts):
+            option = parts[i]
+
+            if option == "-usr":
+                
+            elif option == "-pwd":
+            
+            elif option == "-bio":
+            
+            elif option == "-addpost":
+
+            elif option == "-delpost":
+            
+            else:
+
+    except (IndexError, ValueError):
+        print("ERROR: Invalid format for edit command.")
+    except Exception as e:
+        print(f"ERROR: {e}")
+
+
+def print_profile():
