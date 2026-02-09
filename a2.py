@@ -1,9 +1,13 @@
-# a2.py
+# Olivia Kong
+# oykong@uci.edu
+# 92692989
 
-# Starter code for assignment 2 in ICS 32 Programming with Software Libraries in Python
+import ui
 
-# Replace the following placeholders with your information.
 
-# NAME
-# EMAIL
-# STUDENT ID
+def main():
+    ui.start()
+
+
+if __name__ == "__main__":
+    main()
