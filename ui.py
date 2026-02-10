@@ -43,9 +43,9 @@ def start():
         elif user_input.upper() == "O":
             open_profile()
         elif user_input.upper() == "E":
-            edit_profile()
+            friendly_edit()
         elif user_input.upper() == "P":
-            print_profile()
+            friendly_print()
         elif user_input.upper() in ["L", "D", "R"]:
             a1_commands(user_input)
         else:
