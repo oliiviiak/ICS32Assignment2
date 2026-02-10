@@ -34,11 +34,12 @@ def create_profile():
     global current_profile, current_path
     path_str = input("Enter directory path: ").strip()
     p = Path(path_str)
-    filename = input("Enter filename: ").strip()
 
     if not p.exists() or not p.is_dir():
         print(f"ERROR: The directory {path_str} is invalid.")
         return
+    
+    filename = input("Enter filename: ").strip()
 
     # check if the file path ends in ".dsu"
     if not filename.endswith(".dsu"):
