@@ -17,17 +17,17 @@ def start():
 
     while True:
         user_input = input("\n----Commands-----\n"
-                            + "'C' to create a new file\n"
-                            + "'O' to open file\n"
-                            + "'E' to edit file\n"
-                            + "'P' to print file\n"
-                            + "'L' to list the contents\n"
-                            + "'D' to delete file\n"
-                            + "'R' read contents of file\n"
-                            + "'Q' to quit\n"
-                            + "'admin' for command mode\n"
-                            + "> ").strip()
-        
+                           + "'C' to create a new file\n"
+                           + "'O' to open file\n"
+                           + "'E' to edit file\n"
+                           + "'P' to print file\n"
+                           + "'L' to list the contents\n"
+                           + "'D' to delete file\n"
+                           + "'R' read contents of file\n"
+                           + "'Q' to quit\n"
+                           + "'admin' for command mode\n"
+                           + "> ").strip()
+
         if not user_input:
             continue
 
@@ -61,13 +61,13 @@ def a1_commands(command):
 
     if not full_command_input:
         return
-    
+
     parts = shlex.split(full_command_input)
 
     if len(parts) < 1:
         print("ERROR: Invalid command.")
         return
-    
+
     cmd_type = parts[0].upper()
 
     handle_a1_logic(cmd_type, parts)
@@ -78,7 +78,7 @@ def handle_a1_logic(command, parts):
     if len(parts) < 2:
         print("ERROR: Invalid command.")
         return
-    
+
     path = parts[1]
 
     if command == "L":
@@ -139,13 +139,13 @@ def handle_create(parts):
         if "-n" not in parts:
             print("ERROR")
             return
-        
+
         name_index = parts.index("-n")
 
         if name_index <= 1 or name_index >= len(parts) - 1:
             print("ERROR")
             return
-        
+
         path_parts = parts[1:name_index]
         path_str = " ".join(path_parts)
         filename = parts[name_index + 1]
@@ -155,17 +155,17 @@ def handle_create(parts):
         if not p.exists() or not p.is_dir():
             print("ERROR")
             return
-        
+
         if not filename.endswith(".dsu"):
             filename += ".dsu"
-        
+
         current_path = p / filename
         current_profile = Profile()
 
         current_path.touch()
         current_profile.save_profile(str(current_path))
         print(current_path)
-    
+
     except Exception:
         print("ERROR")
 
@@ -176,7 +176,7 @@ def handle_edit(parts):
     if not current_profile or not current_path:
         print("ERROR")
         return
-    
+
     try:
         # start from index 1 of parts because 0 is E
         i = 1
@@ -209,7 +209,7 @@ def handle_edit(parts):
                 return
 
         current_profile.save_profile(current_path)
-    
+
     except Exception:
         print("ERROR")
 
@@ -218,7 +218,7 @@ def handle_print(parts):
     if not current_profile:
         print("ERROR")
         return
-    
+
     if "-all" in parts:
         print(f"Username: {current_profile.username}")
         print(f"Password: {current_profile.password}")
@@ -226,7 +226,7 @@ def handle_print(parts):
         for i, post in enumerate(current_profile.get_posts()):
             print(f"Post {i}: {post.entry}")
         return
-    
+
     if "-usr" in parts:
         print(current_profile.username)
     if "-pwd" in parts:
@@ -241,7 +241,7 @@ def handle_print(parts):
             idx = int(parts[parts.index("-post") + 1])
             posts = current_profile.get_posts()
             print(posts[idx].entry)
-        except:
+        except Exception:
             print("ERROR")
 
 
@@ -250,7 +250,7 @@ def handle_list(parts):
     if path is None:
         print("ERROR")
         return
-    
+
     try:
         if len(options) == 0:
             a1.list_files(path)
@@ -308,7 +308,7 @@ def create_profile():
     if not p.exists() or not p.is_dir():
         print(f"ERROR: The directory {path_str} is invalid.")
         return
-    
+
     filename = input("Enter filename: ").strip()
 
     # check if the file path ends in ".dsu"
@@ -467,7 +467,7 @@ def friendly_edit():
     if not current_profile:
         print("\nERROR: No journal open.")
         return
-    
+
     print("---Edit Journal---")
     print("Options: -usr, -pwd, -bio, -addpost, -delpost")
 
@@ -475,7 +475,7 @@ def friendly_edit():
 
     if not user_input:
         return
-    
+
     parts = ["E"] + shlex.split(user_input)
     edit_profile(parts)
 
@@ -486,15 +486,15 @@ def friendly_print():
     if not current_profile:
         print("\nERROR: No journal open.")
         return
-    
+
     print("---Print Journal---")
     print("Options: -all, -usr, -pwd,"
           + " -bio, -posts, -post <id>")
-    
+
     user_input = input("Enter print command: ").strip()
 
     if not user_input:
         return
-    
+
     parts = ["P"] + shlex.split(user_input)
     print_profile(parts)
