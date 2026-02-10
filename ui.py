@@ -188,7 +188,7 @@ def handle_edit(parts):
             if i + 1 >= len(parts):
                 print("ERROR")
                 return
-            
+
             val = parts[i+1]
 
             if arg == "-usr":
@@ -209,7 +209,7 @@ def handle_edit(parts):
                 try:
                     index = int(val)
                     if not current_profile.del_post(index):
-                        print("ERROR") # Failed to delete
+                        print("ERROR")
                         return
                 except (ValueError, IndexError):
                     print("ERROR")
