@@ -185,25 +185,34 @@ def handle_edit(parts):
         while i < len(parts):
             arg = parts[i]
 
-            if arg == "-usr" and i + 1 < len(parts):
-                current_profile.username = parts[i+1]
+            if i + 1 >= len(parts):
+                print("ERROR")
+                return
+            
+            val = parts[i+1]
+
+            if arg == "-usr":
+                current_profile.username = val
                 i += 2
-            elif arg == "-pwd" and i + 1 < len(parts):
-                current_profile.password = parts[i+1]
+            elif arg == "-pwd":
+                current_profile.password = val
                 i += 2
-            elif arg == "-bio" and i + 1 < len(parts):
-                current_profile.bio = parts[i+1]
+            elif arg == "-bio":
+                current_profile.bio = val
                 i += 2
-            elif arg == "-addpost" and i + 1 < len(parts):
-                new_post = Post(parts[i+1])
-                current_profile.add_post(new_post)
+            elif arg == "-addpost":
+                if val.strip():
+                    new_post = Post(val)
+                    current_profile.add_post(new_post)
                 i += 2
-            elif arg == "-delpost" and i + 1 < len(parts):
+            elif arg == "-delpost":
                 try:
-                    index = int(parts[i+1])
-                    current_profile.del_post(index)
+                    index = int(val)
+                    if not current_profile.del_post(index):
+                        print("ERROR") # Failed to delete
+                        return
                 except (ValueError, IndexError):
-                    print("ERROR: Invalid post ID")
+                    print("ERROR")
                     return
                 i += 2
             else:
