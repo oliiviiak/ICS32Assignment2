@@ -13,7 +13,9 @@ current_path = None
 
 def start():
     print("Welcome to the Journaling System!")
-    start_choice = input("Enter 'C' to create a new file, 'O' to open, or 'admin' for command mode: ").strip()
+    start_choice = input("Enter 'C' to create a new file,"
+                         + "'O' to open, or 'admin' for command"
+                         + "mode: ").strip()
 
     if start_choice.lower() == "admin":
         run_admin_mode()
@@ -61,7 +63,8 @@ def open_profile(path_provided=None):
         path_str = path_provided
     else:
         # if there's no path given, get path
-        path_str = input("Enter the full path to the .dsu file to open: ").strip()
+        path_str = input("Enter the full path to the"
+                         + ".dsu file to open: ").strip()
 
     # load profile with the given path (current_profile)
     file_path = Path(path_str)
@@ -126,7 +129,7 @@ def print_profile(parts):
     if not current_profile:
         print("ERROR")
         return
-    
+
     # print all option command
     if "-all" in parts:
         print(f"Username: {current_profile.username}")
@@ -134,21 +137,21 @@ def print_profile(parts):
         print(f"Bio: {current_profile.bio}")
         for i, post in enumerate(current_profile.get_posts()):
             print(f"Post #{i}: {post.entry}")
-        
+
     else:
         if "-usr" in parts:
             print(f"{current_profile.username}")
 
         if "-pwd" in parts:
             print(f"{current_profile.password}")
-        
+
         if "-bio" in parts:
             print(f"{current_profile.bio}")
 
         if "-posts" in parts:
             for i, post in enumerate(current_profile.get_posts()):
                 print(f"Post #{i}: {post.entry}")
-        
+
         if "-post" in parts:
             try:
                 # find index of the option,
@@ -165,7 +168,3 @@ def print_profile(parts):
 
             except (ValueError, IndexError):
                 print("ERROR")
-
-        
-    
-        
