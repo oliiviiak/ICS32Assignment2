@@ -37,6 +37,7 @@ def start():
 
         if user_input.lower() == "admin":
             run_admin_mode()
+            break
         elif user_input.upper() == "C":
             create_profile()
         elif user_input.upper() == "O":
@@ -113,7 +114,7 @@ def run_admin_mode():
                 handle_create(parts)
             elif command == "O":
                 if len(parts) > 1:
-                    open_profile(parts[1])
+                    open_profile(parts)
             elif command == "E":
                 handle_edit(parts)
             elif command == "P":
@@ -160,6 +161,9 @@ def handle_create(parts):
         current_path.touch(exist_ok=True)
 
         current_profile = Profile()
+        current_profile.username = ""
+        current_profile.password = ""
+        current_profile.bio = ""
 
         current_profile.save_profile(str(current_path))
         print(current_path)
@@ -343,26 +347,27 @@ def create_profile():
         print(f"ERROR: {e}")
 
 
-def open_profile(path_provided=None):
+def open_profile(parts):
     global current_profile, current_path
 
-    # if there's a path given
-    if path_provided:
-        path_str = path_provided
-    else:
-        # if there's no path given, get path
-        path_str = input("Enter the full path to the"
-                         + ".dsu file to open: ").strip()
+    try:
+        path_str = " ".join(parts[1:]).strip('"').strip("'")
 
-    # load profile with the given path (current_profile)
-    file_path = Path(path_str)
-    if file_path.suffix == ".dsu" and file_path.exists():
-        current_profile = Profile()
-        current_profile.load_profile(str(file_path))
-        current_path = file_path
-        print(f"Opened: {current_path}")
-    else:
-        print("ERROR: path is invalid.")
+        if not path_str:
+            print("ERROR")
+            return
+
+        file_path = Path(path_str)
+
+        if file_path.suffix == ".dsu" and file_path.exists():
+            current_profile = Profile()
+            current_profile.load_profile(str(file_path))
+            current_path = file_path
+            print(f"Opened: {current_path}")
+        else:
+            print("ERROR")
+    except Exception:
+        print("ERROR")
 
 
 def edit_profile(parts):
