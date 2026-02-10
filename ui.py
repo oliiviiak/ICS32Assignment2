@@ -19,6 +19,7 @@ def start():
         user_input = input("\n----Commands-----\n"
                             + "'C' to create a new file\n"
                             + "'O' to open file\n"
+                            + "'E' to edit file\n"
                             + "'L' to list the contents\n"
                             + "'D' to delete file\n"
                             + "'R' read contents of file\n"
@@ -91,7 +92,6 @@ def handle_a1_logic(command, parts):
 
 
 def run_admin_mode():
-
     while True:
         admin_input = input().strip()
 
@@ -108,39 +108,190 @@ def run_admin_mode():
 
 
 def handle_admin_logic(command, parts):
+    if command == "C":
+        handle_create(parts)
+    elif command == "O":
+        if len(parts) > 1:
+            open_profile(parts[1])
+    elif command == "E":
+        handle_edit(parts)
+    elif command == "P":
+        handle_print(parts)
+    elif command == 'L':
+        handle_list(parts)
+    elif command == 'D':
+        handle_delete(parts)
+    elif command == 'R':
+        handle_read(parts)
+    else:
+        print("ERROR")
+
+
+def handle_create(parts):
+    global current_path, current_profile
+
     try:
-        # a1 commands
-        if command in ["L", "D", "R"]:
-            if len(parts) < 2:
+        if "-n" not in parts:
+            print("ERROR")
+            return
+        
+        name_index = parts.index("-n")
+
+        if name_index <= 1 or name_index >= len(parts) - 1:
+            print("ERROR")
+            return
+        
+        path_parts = parts[1:name_index]
+        path_str = " ".join(path_parts)
+        filename = parts[name_index + 1]
+
+        p = Path(path_str)
+
+        if not p.exists() or not p.is_dir():
+            print("ERROR")
+            return
+        
+        if not filename.endswith(".dsu"):
+            filename += ".dsu"
+        
+        current_path = p / filename
+        current_profile = Profile()
+
+        current_path.touch()
+        current_profile.save_profile(str(current_path))
+        print(current_path)
+    
+    except Exception:
+        print("ERROR")
+
+
+def handle_edit(parts):
+    # param parts are the parts of the given command
+    global current_path, current_profile
+    if not current_profile or not current_path:
+        print("ERROR")
+        return
+    
+    try:
+        # start from index 1 of parts because 0 is E
+        i = 1
+        while i < len(parts):
+            arg = parts[i]
+
+            if arg == "-usr" and i + 1 < len(parts):
+                current_profile.username = parts[i+1]
+                i += 2
+            elif arg == "-pwd" and i + 1 < len(parts):
+                current_profile.password = parts[i+1]
+                i += 2
+            elif arg == "-bio" and i + 1 < len(parts):
+                current_profile.bio = parts[i+1]
+                i += 2
+            elif arg == "-addpost" and i + 1 < len(parts):
+                new_post = Post(parts[i+1])
+                current_profile.add_post(new_post)
+                i += 2
+            elif arg == "-delpost" and i + 1 < len(parts):
+                try:
+                    index = int(parts[i+1])
+                    current_profile.del_post(index)
+                except (ValueError, IndexError):
+                    print("ERROR: Invalid post ID")
+                    return
+                i += 2
+            else:
                 print("ERROR")
                 return
-            path = parts[1]
-            
-            if command == "L":
-                if "-r" in parts and "-f" in parts:
-                    a1.list_only_files_recursively(path)
-                elif "-r" in parts:
-                    a1.list_recursively(path)
-                elif "-f" in parts:
-                    a1.list_only_files(path)
-                else:
-                    a1.list_files(path)
-            elif command == "D":
-                a1.delete_dsu_file(path)
-            elif command == "R":
-                a1.read_dsu_file(path)
-        # a2 commands
-        elif command == "C":
-            create_profile(parts)
-        elif command == "O":
-            open_profile(parts)
-        elif command == "E":
-            edit_profile(parts)
-        elif command == "P":
-            print_profile(parts)
+
+        current_profile.save_profile(current_path)
+    
+    except Exception:
+        print("ERROR")
+
+
+def handle_print(parts):
+    if not current_profile:
+        print("ERROR")
+        return
+    
+    if "-all" in parts:
+        print(f"Username: {current_profile.username}")
+        print(f"Password: {current_profile.password}")
+        print(f"Bio: {current_profile.bio}")
+        for i, post in enumerate(current_profile.get_posts()):
+            print(f"Post {i}: {post.entry}")
+        return
+    
+    if "-usr" in parts:
+        print(current_profile.username)
+    if "-pwd" in parts:
+        print(current_profile.password)
+    if "-bio" in parts:
+        print(current_profile.bio)
+    if "-posts" in parts:
+        for i, post in enumerate(current_profile.get_posts()):
+            print(f"Post {i}: {post.entry}")
+    if "-post" in parts:
+        try:
+            idx = int(parts[parts.index("-post") + 1])
+            posts = current_profile.get_posts()
+            print(posts[idx].entry)
+        except:
+            print("ERROR")
+
+
+def handle_list(parts):
+    path, options = a1.parse_L_command(parts)
+    if path is None:
+        print("ERROR")
+        return
+    
+    try:
+        if len(options) == 0:
+            a1.list_files(path)
+        elif options[0] == "-r":
+            if len(options) == 1:
+                a1.list_recursively(path)
+            elif options[1] == "-f":
+                a1.list_only_files_recursively(path)
+            elif options[1] == "-s" and len(options) > 2:
+                a1.list_exact_filename_recursively(path, options[2])
+            elif options[1] == "-e" and len(options) > 2:
+                a1.list_files_extensions_recursively(path, options[2])
+            else:
+                print("ERROR")
+        elif options[0] == "-f":
+            a1.list_only_files(path)
+        elif options[0] == "-s" and len(options) > 1:
+            a1.list_exact_filename(path, options[1])
+        elif options[0] == "-e" and len(options) > 1:
+            a1.list_files_extensions(path, options[1])
         else:
             print("ERROR")
     except Exception:
+        print("ERROR")
+
+
+def handle_delete(parts):
+    if len(parts) > 1:
+        file_path = " ".join(parts[1:])
+
+        try:
+            a1.delete_dsu_file(file_path)
+        except Exception:
+            print("ERROR")
+    else:
+        print("ERROR")
+
+
+def handle_read(parts):
+    if len(parts) > 1:
+        file_path = " ".join(parts[1:])
+        try:
+            a1.read_dsu_file(file_path)
+        except Exception:
+            print("ERROR")
+    else:
         print("ERROR")
 
 
@@ -191,6 +342,8 @@ def create_profile():
 
 
 def open_profile(path_provided=None):
+    global current_profile, current_path
+
     # if there's a path given
     if path_provided:
         path_str = path_provided
@@ -290,7 +443,7 @@ def print_profile(parts):
                 # find index of the option,
                 # then look at the index next to it (for post index)
                 option_index = parts.index("-post")
-                post_index = int(parts[[option_index + 1]])
+                post_index = int(parts[option_index + 1])
 
                 posts = current_profile.get_posts()
                 # check if post index is valid
