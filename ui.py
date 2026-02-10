@@ -31,14 +31,20 @@ def start():
 
 
 def create_profile():
+    global current_profile, current_path
     path_str = input("Enter directory path: ").strip()
-    name = input("Enter filename: ").strip()
+    p = Path(path_str)
+    filename = input("Enter filename: ").strip()
+
+    if not p.exists() or not p.is_dir():
+        print(f"ERROR: The directory {path_str} is invalid.")
+        return
 
     # check if the file path ends in ".dsu"
-    if not name.endswith(".dsu"):
-        name += ".dsu"
+    if not filename.endswith(".dsu"):
+        filename += ".dsu"
 
-    current_path = Path(path_str) / name
+    current_path = p / filename
 
     # get profile parameters information
     username = input("Enter username: ").strip()
@@ -53,8 +59,14 @@ def create_profile():
     # create Profile object using user inputs
     current_profile = Profile(username, password)
     current_profile.bio = bio
-    current_profile.save_profile(str(current_path))
-    print(f"Profile created and saved to {current_path}")
+
+    try:
+        current_path.touch()
+        # save profile
+        current_profile.save_profile(str(current_path))
+        print(f"Profile created and saved to {current_path}")
+    except Exception as e:
+        print(f"ERROR: {e}")
 
 
 def open_profile(path_provided=None):
