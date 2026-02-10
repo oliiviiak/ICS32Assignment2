@@ -37,7 +37,6 @@ def start():
 
         if user_input.lower() == "admin":
             run_admin_mode()
-            break
         elif user_input.upper() == "C":
             create_profile()
         elif user_input.upper() == "O":
@@ -49,7 +48,7 @@ def start():
         elif user_input.upper() in ["L", "D", "R"]:
             a1_commands(user_input)
         else:
-            print("Invalid command.")
+            print("ERROR: Invalid command.")
 
 
 def a1_commands(command):
@@ -98,38 +97,38 @@ def handle_a1_logic(command, parts):
 
 def run_admin_mode():
     while True:
-        admin_input = input().strip()
+        try:
+            admin_input = input().strip()
 
-        if not admin_input:
-            continue
+            if not admin_input:
+                continue
 
-        parts = shlex.split(admin_input)
-        command = parts[0].upper()
+            if admin_input.upper() == "Q":
+                break
 
-        if parts[0].upper() == "Q":
-            break
+            parts = shlex.split(admin_input)
+            command = parts[0].upper()
 
-        handle_admin_logic(command, parts)
+            if command == "C":
+                handle_create(parts)
+            elif command == "O":
+                if len(parts) > 1:
+                    open_profile(parts[1])
+            elif command == "E":
+                handle_edit(parts)
+            elif command == "P":
+                handle_print(parts)
+            elif command == 'L':
+                handle_list(parts)
+            elif command == 'D':
+                handle_delete(parts)
+            elif command == 'R':
+                handle_read(parts)
+            else:
+                print("ERROR")
 
-
-def handle_admin_logic(command, parts):
-    if command == "C":
-        handle_create(parts)
-    elif command == "O":
-        if len(parts) > 1:
-            open_profile(parts[1])
-    elif command == "E":
-        handle_edit(parts)
-    elif command == "P":
-        handle_print(parts)
-    elif command == 'L':
-        handle_list(parts)
-    elif command == 'D':
-        handle_delete(parts)
-    elif command == 'R':
-        handle_read(parts)
-    else:
-        print("ERROR")
+        except Exception:
+            print("ERROR")
 
 
 def handle_create(parts):
@@ -141,28 +140,27 @@ def handle_create(parts):
             return
 
         name_index = parts.index("-n")
-
-        if name_index <= 1 or name_index >= len(parts) - 1:
+        if name_index + 1 >= len(parts):
             print("ERROR")
             return
 
-        path_parts = parts[1:name_index]
-        path_str = " ".join(path_parts)
-        filename = parts[name_index + 1]
-
+        path_str = " ".join(parts[1:name_index]).strip('"').strip("'")
         p = Path(path_str)
 
         if not p.exists() or not p.is_dir():
             print("ERROR")
             return
 
+        filename = parts[name_index + 1].strip('"').strip("'")
+
         if not filename.endswith(".dsu"):
             filename += ".dsu"
 
         current_path = p / filename
+        current_path.touch(exist_ok=True)
+
         current_profile = Profile()
 
-        current_path.touch()
         current_profile.save_profile(str(current_path))
         print(current_path)
 
