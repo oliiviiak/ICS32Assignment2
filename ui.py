@@ -135,3 +135,37 @@ def print_profile(parts):
         for i, post in enumerate(current_profile.get_posts()):
             print(f"Post #{i}: {post.entry}")
         
+    else:
+        if "-usr" in parts:
+            print(f"{current_profile.username}")
+
+        if "-pwd" in parts:
+            print(f"{current_profile.password}")
+        
+        if "-bio" in parts:
+            print(f"{current_profile.bio}")
+
+        if "-posts" in parts:
+            for i, post in enumerate(current_profile.get_posts()):
+                print(f"Post #{i}: {post.entry}")
+        
+        if "-post" in parts:
+            try:
+                # find index of the option,
+                # then look at the index next to it (for post index)
+                option_index = parts.index("-post")
+                post_index = int(parts[[option_index + 1]])
+
+                posts = current_profile.get_posts()
+                # check if post index is valid
+                if 0 <= post_index < len(posts):
+                    print(posts[post_index].entry)
+                else:
+                    print("ERROR: post index invalid.")
+
+            except (ValueError, IndexError):
+                print("ERROR")
+
+        
+    
+        
