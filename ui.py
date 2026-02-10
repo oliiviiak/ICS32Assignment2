@@ -14,8 +14,8 @@ current_path = None
 def start():
     print("Welcome to the Journaling System!")
     start_choice = input("Enter 'C' to create a new file,"
-                         + "'O' to open, or 'admin' for command"
-                         + "mode: ").strip()
+                         + " 'O' to open, or 'admin' for command"
+                         + " mode: ").strip()
 
     if start_choice.lower() == "admin":
         run_admin_mode()
