@@ -20,6 +20,7 @@ def start():
                             + "'C' to create a new file\n"
                             + "'O' to open file\n"
                             + "'E' to edit file\n"
+                            + "'P' to print file\n"
                             + "'L' to list the contents\n"
                             + "'D' to delete file\n"
                             + "'R' read contents of file\n"
@@ -41,6 +42,10 @@ def start():
             create_profile()
         elif user_input.upper() == "O":
             open_profile()
+        elif user_input.upper() == "E":
+            edit_profile()
+        elif user_input.upper() == "P":
+            print_profile()
         elif user_input.upper() in ["L", "D", "R"]:
             a1_commands(user_input)
         else:
@@ -454,3 +459,42 @@ def print_profile(parts):
 
             except (ValueError, IndexError):
                 print("ERROR")
+
+
+def friendly_edit():
+    global current_profile
+
+    if not current_profile:
+        print("\nERROR: No journal open.")
+        return
+    
+    print("---Edit Journal---")
+    print("Options: -usr, -pwd, -bio, -addpost, -delpost")
+
+    user_input = input("Enter edit command: ").strip()
+
+    if not user_input:
+        return
+    
+    parts = ["E"] + shlex.split(user_input)
+    edit_profile(parts)
+
+
+def friendly_print():
+    global current_profile
+
+    if not current_profile:
+        print("\nERROR: No journal open.")
+        return
+    
+    print("---Print Journal---")
+    print("Options: -all, -usr, -pwd,"
+          + " -bio, -posts, -post <id>")
+    
+    user_input = input("Enter print command: ").strip()
+
+    if not user_input:
+        return
+    
+    parts = ["P"] + shlex.split(user_input)
+    print_profile(parts)
