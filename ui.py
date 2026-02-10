@@ -57,7 +57,7 @@ def create_profile():
         return
 
     # create Profile object using user inputs
-    current_profile = Profile(username, password)
+    current_profile = Profile(username=username, password=password)
     current_profile.bio = bio
 
     try:
