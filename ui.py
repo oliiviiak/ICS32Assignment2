@@ -16,12 +16,12 @@ def start():
     print("Welcome to the Journaling System!")
 
     while True:
-        user_input = input("Commands:\n"
-                            + "'C' to create a new file"
+        user_input = input("\n----Commands-----\n"
+                            + "'C' to create a new file\n"
                             + "'O' to open file\n"
                             + "'L' to list the contents\n"
-                            + "'D' to delete file"
-                            + "'R' read contents of file"
+                            + "'D' to delete file\n"
+                            + "'R' read contents of file\n"
                             + "'Q' to quit\n"
                             + "'admin' for command mode\n"
                             + "> ").strip()
@@ -40,13 +40,13 @@ def start():
         elif user_input.upper() == "O":
             open_profile()
         elif user_input.upper() in ["L", "D", "R"]:
-            handle_a1_logic(user_input)
+            a1_commands(user_input)
         else:
             print("Invalid command.")
 
 
 def a1_commands(command):
-    print(f"{command} Command Menu")
+    print(f"---{command} Command Menu---")
     print(f"Command Format:")
     print(f"[COMMAND] [INPUT] [[-]OPTION] [INPUT]")
 
