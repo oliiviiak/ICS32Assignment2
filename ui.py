@@ -336,11 +336,10 @@ def create_profile():
     # create Profile object using user inputs
     current_profile = Profile(username=username, password=password)
     current_profile.bio = bio
+    current_profile.save_profile(str(current_path))
 
     try:
         current_path.touch()
-        # save profile
-        current_profile.save_profile(str(current_path))
         print(f"Profile created and saved to {current_path}")
     except Exception as e:
         print(f"ERROR: {e}")
@@ -369,6 +368,7 @@ def open_profile(path_provided=None):
 
 
 def edit_profile(parts):
+    global current_profile, current_path
     # param parts are the parts of the given command
 
     if current_profile is None:
@@ -380,6 +380,10 @@ def edit_profile(parts):
         i = 1
         while i < len(parts):
             option = parts[i]
+            if i + 1 >= len(parts):
+                break
+
+            val = parts[i+1]
 
             if option == "-usr":
                 current_profile.username = parts[i+1]
@@ -394,8 +398,8 @@ def edit_profile(parts):
                 i += 2
 
             elif option == "-addpost":
-                new_entry = parts[i+1]
-                current_profile.add_post(Post(new_entry))
+                if val.strip():
+                    current_profile.add_post(Post(val))
                 i += 2
 
             elif option == "-delpost":
@@ -416,6 +420,7 @@ def edit_profile(parts):
 
 
 def print_profile(parts):
+    global current_profile, current_path
     # check if loaded a profile
     if not current_profile:
         print("ERROR")
