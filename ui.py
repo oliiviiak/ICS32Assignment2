@@ -3,6 +3,7 @@
 # 92692989
 
 import shlex
+import a1
 from pathlib import Path
 from Profile import Profile, Post
 
@@ -13,19 +14,79 @@ current_path = None
 
 def start():
     print("Welcome to the Journaling System!")
-    start_choice = input("Enter 'C' to create a new file,"
-                         + " 'O' to open, or 'admin' for command"
-                         + " mode: ").strip()
 
-    if start_choice.lower() == "admin":
-        run_admin_mode()
-    elif start_choice.upper() == "C":
-        create_profile()
-    elif start_choice.upper() == "O":
-        open_profile()
-    else:
-        print("Invalid command.")
+    while True:
+        user_input = input("Commands:\n"
+                            + "'C' to create a new file"
+                            + "'O' to open file\n"
+                            + "'L' to list the contents\n"
+                            + "'D' to delete file"
+                            + "'R' read contents of file"
+                            + "'Q' to quit\n"
+                            + "'admin' for command mode\n"
+                            + "> ").strip()
+        
+        if not user_input:
+            continue
 
+        if user_input.upper() == "Q":
+            print("Bye!")
+            break
+
+        if user_input.lower() == "admin":
+            run_admin_mode()
+        elif user_input.upper() == "C":
+            create_profile()
+        elif user_input.upper() == "O":
+            open_profile()
+        elif user_input.upper() in ["L", "D", "R"]:
+            handle_a1_logic(user_input)
+        else:
+            print("Invalid command.")
+
+
+def a1_commands(command):
+    print(f"{command} Command Menu")
+    print(f"Command Format:")
+    print(f"[COMMAND] [INPUT] [[-]OPTION] [INPUT]")
+
+    full_command_input = input("Enter full command: ")
+
+    if not full_command_input:
+        return
+    
+    parts = shlex.split(full_command_input)
+
+    if len(parts) < 1:
+        print("ERROR: Invalid command.")
+        return
+    
+    cmd_type = parts[0].upper()
+
+    handle_a1_logic(cmd_type, parts)
+
+
+def handle_a1_logic(command, parts):
+
+    if len(parts) < 2:
+        print("ERROR: Invalid command.")
+        return
+    
+    path = parts[1]
+
+    if command == "L":
+        if "-r" in parts and "-f" in parts:
+            a1.list_only_files_recursively(path)
+        elif "-r" in parts:
+            a1.list_recursively(path)
+        elif "-f" in parts:
+            a1.list_only_files(path)
+        else:
+            a1.list_files(path)
+    elif command == "D":
+        a1.delete_dsu_file(path)
+    elif command == "R":
+        a1.read_dsu_file(path)
 
 # def run_admin_mode():
 
