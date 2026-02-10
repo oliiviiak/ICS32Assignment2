@@ -35,6 +35,7 @@ def start():
 
         if user_input.lower() == "admin":
             run_admin_mode()
+            break
         elif user_input.upper() == "C":
             create_profile()
         elif user_input.upper() == "O":
@@ -88,7 +89,59 @@ def handle_a1_logic(command, parts):
     elif command == "R":
         a1.read_dsu_file(path)
 
-# def run_admin_mode():
+
+def run_admin_mode():
+
+    while True:
+        admin_input = input().strip()
+
+        if not admin_input:
+            continue
+
+        parts = shlex.split(admin_input)
+        command = parts[0].upper()
+
+        if parts[0].upper() == "Q":
+            break
+
+        handle_admin_logic(command, parts)
+
+
+def handle_admin_logic(command, parts):
+    try:
+        # a1 commands
+        if command in ["L", "D", "R"]:
+            if len(parts) < 2:
+                print("ERROR")
+                return
+            path = parts[1]
+            
+            if command == "L":
+                if "-r" in parts and "-f" in parts:
+                    a1.list_only_files_recursively(path)
+                elif "-r" in parts:
+                    a1.list_recursively(path)
+                elif "-f" in parts:
+                    a1.list_only_files(path)
+                else:
+                    a1.list_files(path)
+            elif command == "D":
+                a1.delete_dsu_file(path)
+            elif command == "R":
+                a1.read_dsu_file(path)
+        # a2 commands
+        elif command == "C":
+            create_profile(parts)
+        elif command == "O":
+            open_profile(parts)
+        elif command == "E":
+            edit_profile(parts)
+        elif command == "P":
+            print_profile(parts)
+        else:
+            print("ERROR")
+    except Exception:
+        print("ERROR")
 
 
 def create_profile():
