@@ -47,6 +47,12 @@ def create_profile():
 
     current_path = p / filename
 
+    # if file already exists just open
+    if current_path.exists():
+        print(f"File already exists. Opening {current_path}")
+        open_profile(str(current_path))
+        return
+
     # get profile parameters information
     username = input("Enter username: ").strip()
     password = input("Enter password: ").strip()
