@@ -25,7 +25,7 @@ def start():
         print("Invalid command.")
 
 
-def run_admin_mode():
+# def run_admin_mode():
 
 
 def create_profile():
@@ -121,4 +121,17 @@ def edit_profile(parts):
         print(f"ERROR: {e}")
 
 
-def print_profile():
+def print_profile(parts):
+    # check if loaded a profile
+    if not current_profile:
+        print("ERROR")
+        return
+    
+    # print all option command
+    if "-all" in parts:
+        print(f"Username: {current_profile.username}")
+        print(f"Password: {current_profile.password}")
+        print(f"Bio: {current_profile.bio}")
+        for i, post in enumerate(current_profile.get_posts()):
+            print(f"Post #{i}: {post.entry}")
+        
